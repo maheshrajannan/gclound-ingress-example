@@ -21,40 +21,64 @@ unset DOCKER_TLS_PATH
 # TODO: works only one by one. add fail safety
 # helm init. should not do this. agh!
 # sleep 10
-# helm version
+# You will not install ingress each time. 
+# AS long as you have something repeatable but less
+# helm version <-- will get an error could not find tiller
 # Read about K8 service account and how only sas are managed by K8.
 # TODO: check if it exists. MINOR.
 # https://cloud.google.com/community/tutorials/nginx-ingress-gke
 echo "1/10 Create the service account tiller."
 kubectl --namespace kube-system create serviceaccount tiller
 sleep 60
+kubectl --namespace kube-system get serviceaccount tiller
+kubectl --namespace kube-system describe serviceaccount tiller
 
 # Read about cluster role binding.
 # TODO: check if it exists. MINOR.
 # Create the cluster role binding.
 echo "2/10 Create the cluster role binding."
 kubectl create clusterrolebinding tiller-cluster-rule  --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
-sleep 10
+sleep 60
+kubectl describe clusterrolebinding tiller-cluster-rule
+kubectl get clusterrolebinding tiller-cluster-rule
+
 echo "3/10 Create the service account."
 helm init --service-account tiller
+sleep 60
 echo "4/10 patch deploy tiller, to fix the bug :( ."
 kubectl --namespace kube-system patch deploy tiller-deploy  -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
-sleep 60
 
 # TODO: check if it exists. MINOR.
 echo "5/10 Deploy NGINX Ingress Controller with RBAC enabled"
 helm install --name nginx-ingress stable/nginx-ingress --set rbac.create=true --set controller.publishService.enabled=true
-kubectl --namespace default get services -o wide -w nginx-ingress-controller
+# ==> v1/Deployment
+# NAME                           READY  UP-TO-DATE  AVAILABLE  AGE
+# nginx-ingress-controller       0/1    1           0          1s
+# nginx-ingress-default-backend  0/1    1           0          1s
+kubectl rollout status deployment nginx-ingress-controller
+kubectl rollout status deployment nginx-ingress-default-backend
+#kubectl --namespace default get services -o wide -w nginx-ingress-controller
+kubectl --namespace default get services -o wide
+echo "6/10 Check in GKE cloud console that there are no activity errors."
 # TODO: move to another script. MEDIUM.
-echo "6/10 Deploy the sample application ."
+echo "7/10 Deploy the sample application ."
 kubectl apply -f web-deployment.yaml 
-kubectl apply -f web-service.yaml 
-kubectl apply -f basic-ingress.yaml 
-kubectl get ingress
-sleep 30
-kubectl get ingress
-echo "When you face this error, The server encountered a temporary error and could not complete your request.<p>Please try again in 30 seconds. Try curl after 30 seconds"
 
+echo "8/10 Deploy the sample Service ."
+kubectl apply -f web-service.yaml 
+kubectl get services
+
+echo "9/10 Deploy the sample Service ."
+kubectl apply -f basic-ingress.yaml 
+# INFO: This is to prevent silent Errors.
+kubectl rollout status deployment web
+
+kubectl get ingress
+
+# TODO:
+echo "10/10 Sleeping and Curling to endpoint."
+sleep 60
+sh ingressIpPort.sh
 
 trap : 0
 

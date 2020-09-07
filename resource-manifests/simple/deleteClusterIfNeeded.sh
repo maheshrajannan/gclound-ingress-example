@@ -34,8 +34,14 @@ if [[ LOADBALANCEDCLUSTER_EXIST -ne 0 ]]; then
 	# echo "Deleted the cluster :"$LOADBALANCEDCLUSTER
 	# kubectl config delete-context $LOADBALANCEDCLUSTER
 	# echo "Deleted the cluster context:"$LOADBALANCEDCLUSTER
-	gcloud container clusters delete loadbalancedcluster -q --async
-	echo "deletion of gcloud cluster is in progress...in background."
+	if [ "$ASYNC" == "FALSE" ]; then
+		echo "deleting cluster synchronously"
+		echo "Y" | gcloud container clusters delete loadbalancedcluster
+	else
+		gcloud container clusters delete loadbalancedcluster -q --async
+		echo "deletion of gcloud cluster is in progress...in background."
+	fi
+
 else
 	echo "No clusters to delete"
 fi
