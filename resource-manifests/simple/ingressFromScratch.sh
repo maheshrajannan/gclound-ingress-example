@@ -14,10 +14,12 @@ trap 'abort' 0
 
 set -e
 
-echo "Step 1/2 recreateCluster"
+echo "Step 1/3 recreateCluster"
 sh recreateCluster.sh
-echo "Step 2/2 installIngress"
+echo "Step 2/3 installIngress"
 sh installIngress.sh
+echo "Step 3/3 deployBasicIngress"
+sh deployBasicIngress.sh
 
 trap : 0
 
