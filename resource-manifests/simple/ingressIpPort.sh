@@ -24,7 +24,7 @@ ingressIp=""
 ingressPort=""
 gettingHello=""
 while [ -z $ingressIp ]; do
-    sleep 1
+    sleep 30
     ingressIp=`kubectl get ingress basic-ingress --output=jsonpath='{.status.loadBalancer.ingress[0].ip}'`
 	ingressPort=80
 done
@@ -35,11 +35,8 @@ echo "Launching curl http://"$ingressIp":"$ingressPort
 
 gettingHello=`curl -v --silent "http://"$ingressIp":"$ingressPort"/" 2>&1 | grep Hello | wc -c`
 
-
-
 echo "gettingHello: $gettingHello"
 echo "When you face this error, The server encountered a temporary error and could not complete your request.<p>Please try again in 30 seconds. Try curl after 30 seconds"
-
 # curl http://34.96.93.69:80 2>&1 | grep Hello
 #curl -v --silent https://google.com/ 2>&1 | grep expire
 
@@ -47,6 +44,8 @@ endCheck="";
 numRetries=0;
 
 while [ -z $endCheck ]; do
+	echo "loopNo-"$numRetries
+	echo "gettingHello-"$gettingHello
     if [[ gettingHello -eq 14 ]]; then
     	endCheck="DONE"
     	outputHello=`curl -v --silent "http://"$ingressIp":"$ingressPort"/" 2>&1 | grep Hello`
@@ -58,11 +57,15 @@ while [ -z $endCheck ]; do
 			echo "FAILED after 5 retries"
 		else
 			numRetries=$((numRetries+1))
-			echo "inremented-"$numRetries
+			echo "incremented-"$numRetries
 		fi 
-		sleep 5
+		echo "sleeping"
+		sleep 120
+		echo "slept"
 		gettingHello=`curl -v --silent "http://"$ingressIp":"$ingressPort"/" 2>&1 | grep Hello | wc -c`
-		outputHello=`curl -v --silent "http://"$ingressIp":"$ingressPort"/" 2>&1 | grep Hello`
+		echo "gettingHello again:"$gettingHello
+		#outputHello=`curl -v --silent "http://"$ingressIp":"$ingressPort 2>&1 | grep Hello`
+		#echo "outputHello again:"$outputHello
 	fi
 done
 
