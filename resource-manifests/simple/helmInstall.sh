@@ -2,9 +2,8 @@
 # OS and directory structure.
 
 brew uninstall helm@2
-
 brew install helm@2
-
+brew link --overwrite --force helm@2
 # If you need to have helm@2 first in your PATH run:
 #   echo 'export PATH="/usr/local/opt/helm@2/bin:$PATH"' >> /Users/maheshrajannan/.bash_profile
 

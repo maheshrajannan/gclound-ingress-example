@@ -24,7 +24,7 @@ ingressIp=""
 ingressPort=""
 gettingHello=""
 while [ -z $ingressIp ]; do
-    sleep 30
+    sleep 60
     ingressIp=`kubectl get ingress basic-ingress --output=jsonpath='{.status.loadBalancer.ingress[0].ip}'`
 	ingressPort=80
 done
@@ -52,7 +52,7 @@ while [ -z $endCheck ]; do
 		echo "We are good:"$outputHello
 	else
 		echo "OMG. NOT good after retries#"$numRetries
-		if [[ numRetries -eq 4 ]]; then
+		if [[ numRetries -eq 9 ]]; then
 			endCheck="FAILED"
 			echo "FAILED after 5 retries"
 		else

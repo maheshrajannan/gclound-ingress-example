@@ -13,7 +13,8 @@ abort()
 trap 'abort' 0
 
 set -e
-# TODO: move to another script. MEDIUM.
+# TODO: Publish sample app yourself.
+# https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app
 echo "1/5 Deploy the sample application ."
 kubectl apply -f web-deployment.yaml 
 
@@ -27,13 +28,12 @@ kubectl apply -f basic-ingress.yaml
 kubectl rollout status deployment web
 
 kubectl get ingress basic-ingress
+sleep 60
 
 # TODO:
 echo "4/5 Sleeping and Curling to endpoint."
-sleep 60
 sh ingressIpPort.sh
 echo "5/5 DONE deployBasicIngress."
-
 
 trap : 0
 
