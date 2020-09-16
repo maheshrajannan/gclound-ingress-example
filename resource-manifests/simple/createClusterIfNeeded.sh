@@ -19,17 +19,22 @@ unset DOCKER_HOST
 unset DOCKER_TLS_VERIFY
 unset DOCKER_TLS_PATH
 
+clusterName="loadbalancedcluster";
+echo "cluster dealing with $clusterName"
+
 # The kubectl context mode is not error proof ?
 # ok, so do not mess with the context.
-LOADBALANCEDCLUSTER=$(kubectl config get-clusters | grep loadbalancedcluster | wc -c)
+LOADBALANCEDCLUSTER=$(kubectl config get-clusters | grep $clusterName | wc -c)
 # TODO: one variable for exists and one for cluster name
 echo "Should i create -" $LOADBALANCEDCLUSTER
 if [[ LOADBALANCEDCLUSTER -ne 0 ]]; then
 	echo "Cluster Exists. NO Need to be created."${LOADBALANCEDCLUSTER};
+	echo "cluster dealing with $clusterName"
 else
 	# DONE: It is now coming here.
 	echo "Cluster Does not exit. Need to be created.";
-	gcloud container clusters create loadbalancedcluster --num-nodes=2
+	echo "cluster dealing with $clusterName"
+	gcloud container clusters create $clusterName --num-nodes=2
 fi
 
 #helm init agh..Trouble maker.

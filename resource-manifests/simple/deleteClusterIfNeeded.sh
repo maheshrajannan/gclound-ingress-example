@@ -22,11 +22,14 @@ unset DOCKER_TLS_PATH
 echo "INFO: Docker system pruning to save space:"
 docker system prune -f
 
+clusterName="loadbalancedcluster";
+echo "cluster dealing with $clusterName"
+
 # TODO: change to get-clusters instead of get-contexts, they are 2 different things.
-LOADBALANCEDCLUSTER_EXIST=$(kubectl config get-clusters | grep loadbalancedcluster | wc -c)
+LOADBALANCEDCLUSTER_EXIST=$(kubectl config get-clusters | grep ${clusterName} | wc -c)
 echo "Do clusters exist?-" $LOADBALANCEDCLUSTER_EXIST
 if [[ LOADBALANCEDCLUSTER_EXIST -ne 0 ]]; then
-	LOADBALANCEDCLUSTER=`kubectl config get-clusters | grep loadbalancedcluster`
+	LOADBALANCEDCLUSTER=`kubectl config get-clusters | grep ${clusterName}`
 	# gke_translator-258700_us-central1-f_translator3
 	echo "The cluster to be deleted is :"$LOADBALANCEDCLUSTER
 	kubectl config delete-cluster $LOADBALANCEDCLUSTER
@@ -36,9 +39,9 @@ if [[ LOADBALANCEDCLUSTER_EXIST -ne 0 ]]; then
 	# echo "Deleted the cluster context:"$LOADBALANCEDCLUSTER
 	if [ "$ASYNC" == "FALSE" ]; then
 		echo "deleting cluster synchronously"
-		echo "Y" | gcloud container clusters delete loadbalancedcluster
+		echo "Y" | gcloud container clusters delete ${clusterName}
 	else
-		gcloud container clusters delete loadbalancedcluster -q --async
+		gcloud container clusters delete ${clusterName} -q --async
 		echo "deletion of gcloud cluster is in progress...in background."
 	fi
 
