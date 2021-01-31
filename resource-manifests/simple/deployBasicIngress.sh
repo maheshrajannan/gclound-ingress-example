@@ -23,6 +23,7 @@ kubectl apply -f web-service.yaml
 kubectl get services
 
 echo "3/5 Deploy the sample Service ."
+#TODO: so ingress is just a CRD ? created through deployment
 kubectl apply -f basic-ingress.yaml 
 # INFO: This is to prevent silent Errors.
 kubectl rollout status deployment web
