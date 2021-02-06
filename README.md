@@ -115,3 +115,10 @@ To revert your SDK to the previously installed version, you may run:
   $ gcloud components update --version 295.0.0
 
   brew install helm
+
+TODO
+
+xcrun: error: invalid active developer path
+
+TODO:
+gcloud components update
