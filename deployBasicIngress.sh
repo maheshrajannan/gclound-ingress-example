@@ -16,15 +16,15 @@ set -e
 # TODO: Publish sample app yourself.
 # https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app
 echo "1/5 Deploy the sample application ."
-kubectl apply -f web-deployment.yaml 
+kubectl apply -f resource-manifests/web-deployment.yaml 
 
 echo "2/15 Deploy the sample Service ."
-kubectl apply -f web-service.yaml 
+kubectl apply -f resource-manifests/web-service.yaml 
 kubectl get services
 
 echo "3/5 Deploy the sample Service ."
 #TODO: so ingress is just a CRD ? created through deployment
-kubectl apply -f basic-ingress.yaml 
+kubectl apply -f resource-manifests/basic-ingress.yaml 
 # INFO: This is to prevent silent Errors.
 kubectl rollout status deployment web
 
