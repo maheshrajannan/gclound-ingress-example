@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-  - host: 35.193.103.240.xip.io
+  - host: 34.72.148.148.xip.io
     http:
       paths:
       - backend:
